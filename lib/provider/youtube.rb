@@ -8,7 +8,14 @@ class Youtube
                 :view_count
 
   def initialize(url)
-    @video_id = url.gsub(/.*v=([^&]+).*$/i, '\1')
+    case url
+    when /user/
+      @video_id = url.split("/").last
+    when /youtube\.com/
+      @video_id = url.gsub(/.*v=([^&]+).*$/i, '\1')
+    when /youtu\.be/
+      @video_id = url.split("/").last
+    end
     get_info unless @video_id == url
   end
 
