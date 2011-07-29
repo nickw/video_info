@@ -22,7 +22,13 @@ class Youtube
 private
 
   def get_info
-    doc = Hpricot(open("http://gdata.youtube.com/feeds/api/videos/#{@video_id}"))
+    begin
+      xml = open("http://gdata.youtube.com/feeds/api/videos/#{@video_id}")
+    rescue
+      return nil
+    end
+    doc = Hpricot(xml)
+
     @provider         = "YouTube"
     @url              = "http://www.youtube.com/watch?v=#{@video_id}"
     @title            = doc.search("media:title").inner_text

@@ -6,16 +6,22 @@ class Vimeo
                 :duration, :date, :width, :height,
                 :thumbnail_small, :thumbnail_large,
                 :view_count
-  
+
   def initialize(url)
     @video_id = url.gsub(/.*\.com\/([0-9]+).*$/i, '\1')
     get_info unless @video_id == url
   end
-  
+
 private
-  
+
   def get_info
-    doc = Hpricot(open("http://vimeo.com/api/v2/video/#{@video_id}.xml"))
+    begin
+      xml = open("http://vimeo.com/api/v2/video/#{@video_id}.xml")
+    rescue
+      return nil
+    end
+    doc = Hpricot(xml)
+
     @provider         = "Vimeo"
     @url              = doc.search("url").inner_text
     @title            = doc.search("title").inner_text
@@ -29,5 +35,5 @@ private
     @thumbnail_large  = doc.search("thumbnail_large").inner_text
     @view_count       = doc.search("stats_number_of_plays").inner_text.to_i
   end
-  
+
 end
